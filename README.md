@@ -1,6 +1,8 @@
 # flappy-bird
 just a copied of flappy bird game
 
+    ![FlappyBird](src/images/favicon.ico)
+
 ## Installation and Usage
 
 ### Using git
