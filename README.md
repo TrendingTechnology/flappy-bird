@@ -1,22 +1,33 @@
 # flappy-bird
-just a copied of flappy bird game
+Fust a copied of flappy bird game made by Thuongton999
 
     ![FlappyBird](src/images/favicon.ico)
 
 ## Installation and Usage
 
-### Using git
-make sure you installed python before
+### Using terminal (on Window)
+Make sure you installed [Python](https://python.org) and [Git](https://git-scm.com/) before, you can check that by copy and paste this to your terminal
+```
+python --version
+git --version
+```
+If it log something like `Python 3.x.x` and `git version x.x.x.<CurrentOS>.x`, now you can continue.
+Or else, you can go to [this page](https://www.python.org/downloads/) and download & install the Python version you want.
+And download [Git here](https://git-scm.com/downloads) too.
+
+When everything is done, copy and paste this to your terminal
 ```
 git clone https://github.com/thuongton999/flappy-bird.git
 pip install pygame
-python ./src/main.py
+cd ./src/
+python main.py
 ```
+
 ### Manual install
-> First-step: Download the .zip file
+> Download the .zip file
 > 
 > Extract it
 > 
-> Open the folder `build` and run `main.exe`
+> Open the folder `built` and run `main.exe`
 
 Copyright © by Thuongton999
