@@ -29,7 +29,7 @@ VSVersionInfo(
       [ 
       StringTable(
         u'040904b0',
-        [StringStruct(u'CompanyName', u''),
+        [StringStruct(u'CompanyName', u'Thuongton999'),
         StringStruct(u'ProductName', u'flappy_bird'),
         StringStruct(u'ProductVersion', u'1.0.0.0'), #<- should be same as filevers
         StringStruct(u'OriginalFilename', u'main.exe'),
