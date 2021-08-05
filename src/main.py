@@ -29,7 +29,7 @@ gameDefaultSettings = {
     "COPYRIGHT": pygame.font.Font(initPath+"/font/FlappyBirdRegular.ttf", 42),
     "BIRD_IMAGE": pygame.image.load(initPath + "/images/bird.png"),
     "COLUMN_IMAGE": pygame.image.load(initPath + "/images/column.png"),
-    "ICON": pygame.image.load(initPath + "/images/icon.png"),
+    "ICON": pygame.image.load(initPath + "/images/favicon.ico"),
     "BACKGROUND": pygame.image.load(initPath + "/images/background.png"),
     "START_BUTTON": pygame.image.load(initPath + "/images/start_button.png")
 }
