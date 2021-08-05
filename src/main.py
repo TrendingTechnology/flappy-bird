@@ -6,7 +6,6 @@ import sys
 import platform
 import random
 
-initPath = os.path.dirname(__file__)
 pygame.init()
 
 # this use for build .exe file
@@ -16,7 +15,6 @@ def resource_path(relative_path):
         base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
-
     return os.path.join(base_path, relative_path)
 
 gameDefaultSettings = {
@@ -34,15 +32,15 @@ gameDefaultSettings = {
     "MAX_COLUMN_HEIGHT": 300,
     "COLUMN_SPACING": 200,
     "COLUMNS": 6,
-    "DEFAULT_TEXT": pygame.font.Font(initPath + "/font/FlappyBirdRegular.ttf", 48),
-    "DEFAULT_HEADER": pygame.font.Font(initPath + "/font/FlappyBirdRegular.ttf", 78),
-    "DEFAULT_TITLE": pygame.font.Font(initPath + "/font/FlappyBirdRegular.ttf", 128),
-    "COPYRIGHT": pygame.font.Font(initPath+"/font/FlappyBirdRegular.ttf", 42),
-    "BIRD_IMAGE": pygame.image.load(initPath + "/images/bird.png"),
-    "COLUMN_IMAGE": pygame.image.load(initPath + "/images/column.png"),
-    "ICON": pygame.image.load(initPath + "/images/favicon.ico"),
-    "BACKGROUND": pygame.image.load(initPath + "/images/background.png"),
-    "START_BUTTON": pygame.image.load(initPath + "/images/start_button.png")
+    "DEFAULT_TEXT": pygame.font.Font(resource_path("/font/FlappyBirdRegular.ttf"), 48),
+    "DEFAULT_HEADER": pygame.font.Font(resource_path("/font/FlappyBirdRegular.ttf"), 78),
+    "DEFAULT_TITLE": pygame.font.Font(resource_path("/font/FlappyBirdRegular.ttf"), 128),
+    "COPYRIGHT": pygame.font.Font(resource_path("/font/FlappyBirdRegular.ttf"), 42),
+    "BIRD_IMAGE": pygame.image.load(resource_path("/images/bird.png")),
+    "COLUMN_IMAGE": pygame.image.load(resource_path("/images/column.png")),
+    "ICON": pygame.image.load(resource_path("/images/favicon.ico")),
+    "BACKGROUND": pygame.image.load(resource_path("/images/background.png")),
+    "START_BUTTON": pygame.image.load(resource_path("/images/start_button.png"))
 }
 
 colors = {
