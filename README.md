@@ -7,9 +7,11 @@ Fust a copied of flappy bird game made by Thuongton999
 Make sure you installed [Python](https://python.org) and [Git](https://git-scm.com/) before, you can check that by copy and paste this to your terminal
 ```
 python --version
+git --version
 ```
-If it log something like `Python 3.x.x`, now you can continue.
-Or else, you can go to [this page](https://python.org) then go to [download](https://www.python.org/downloads/) and download & install the version you want.
+If it log something like `Python 3.x.x` and `git version x.x.x.<CurrentOS>.x`, now you can continue.
+Or else, you can go to [this page](https://www.python.org/downloads/) and download & install the Python version you want.
+And [here](https://git-scm.com/downloads) too.
 
 When everything is done, copy and paste this to your terminal
 ```
