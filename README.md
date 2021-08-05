@@ -12,7 +12,9 @@ python ./src/main.py
 ```
 ### Manual install
 > First-step: Download the .zip file
+> 
 > Extract it
+> 
 > Open the folder `build` and run `main.exe`
 
 Copyright © by Thuongton999
