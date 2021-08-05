@@ -9,7 +9,7 @@ Make sure you installed python before, you can check by copy and paste this to t
 python --version
 ```
 If it log something like `Python 3.x.x`, now you can continue.
-Or else, you can go to [this page](https://python.org) go to [Download](https://www.python.org/downloads/) and download & install the version you want.
+Or else, you can go to [this page](https://python.org) then go to [download](https://www.python.org/downloads/) and download & install the version you want.
 
 When everything is done, copy and paste this to your terminal
 ```
