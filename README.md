@@ -1,7 +1,7 @@
 # flappy-bird
 Fust a copied of flappy bird game made by Thuongton999
 
-    ![FlappyBird](src/images/favicon.ico)
+![FlappyBird](src/images/favicon.ico)
 
 ## Installation and Usage
 
