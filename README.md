@@ -4,7 +4,7 @@ Fust a copied of flappy bird game made by Thuongton999
 ## Installation and Usage
 
 ### Using terminal (on Window)
-Make sure you installed python before, you can check that by copy and paste this to your terminal
+Make sure you installed [Python](https://python.org) and [Git](https://git-scm.com/) before, you can check that by copy and paste this to your terminal
 ```
 python --version
 ```
