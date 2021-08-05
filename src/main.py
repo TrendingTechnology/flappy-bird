@@ -11,10 +11,10 @@ pygame.init()
 # this use for build .exe file
 def resource_path(relative_path):
     try:
-    # PyInstaller creates a temp folder and stores path in _MEIPASS
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
     except Exception:
-        base_path = os.path.abspath(".")
+        base_path = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(base_path, relative_path)
 
 gameDefaultSettings = {
@@ -32,15 +32,15 @@ gameDefaultSettings = {
     "MAX_COLUMN_HEIGHT": 300,
     "COLUMN_SPACING": 200,
     "COLUMNS": 6,
-    "DEFAULT_TEXT": pygame.font.Font(resource_path("src\\font\\FlappyBirdRegular.ttf"), 48),
-    "DEFAULT_HEADER": pygame.font.Font(resource_path("src\\font\\FlappyBirdRegular.ttf"), 78),
-    "DEFAULT_TITLE": pygame.font.Font(resource_path("src\\font\\FlappyBirdRegular.ttf"), 128),
-    "COPYRIGHT": pygame.font.Font(resource_path("src\\font\\FlappyBirdRegular.ttf"), 42),
-    "BIRD_IMAGE": pygame.image.load(resource_path("src\\images\\bird.png")),
-    "COLUMN_IMAGE": pygame.image.load(resource_path("src\\images\\column.png")),
-    "ICON": pygame.image.load(resource_path("src\\images\\favicon.ico")),
-    "BACKGROUND": pygame.image.load(resource_path("src\\images\\background.png")),
-    "START_BUTTON": pygame.image.load(resource_path("src\\images\\start_button.png"))
+    "DEFAULT_TEXT": pygame.font.Font(resource_path("font/FlappyBirdRegular.ttf"), 48),
+    "DEFAULT_HEADER": pygame.font.Font(resource_path("font/FlappyBirdRegular.ttf"), 78),
+    "DEFAULT_TITLE": pygame.font.Font(resource_path("font/FlappyBirdRegular.ttf"), 128),
+    "COPYRIGHT": pygame.font.Font(resource_path("font/FlappyBirdRegular.ttf"), 42),
+    "BIRD_IMAGE": pygame.image.load(resource_path("images/bird.png")),
+    "COLUMN_IMAGE": pygame.image.load(resource_path("images/column.png")),
+    "ICON": pygame.image.load(resource_path("images/favicon.ico")),
+    "BACKGROUND": pygame.image.load(resource_path("images/background.png")),
+    "START_BUTTON": pygame.image.load(resource_path("images/start_button.png"))
 }
 
 colors = {
@@ -375,9 +375,6 @@ def gamePlay():
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                 bird.positionY -= bird.speed if bird.positionY >= 0 else 0
                 bird.speed = bird.defaultSpeed
-
-        bird.positionY += bird.speed + 0.5*environment.gravity
-        bird.speed += environment.gravity
                             
         for topColumn, bottomColumn, passed in columns.columns:
             topColumn.positionX -= window.speed
@@ -394,11 +391,14 @@ def gamePlay():
             columns.columns.pop(0)
             columns.addNewColumn()
 
-        if not (0 <= bird.positionY <= window.HEIGHT - bird.HEIGHT):
-            bird.dead = True
+        bird.positionY += bird.speed + 0.5*environment.gravity
+        bird.speed += environment.gravity
 
         window.interface.blit(bird.birdImage, (bird.positionX, bird.positionY))
         score.render()
+
+        if not (0 <= bird.positionY <= window.HEIGHT - bird.HEIGHT):
+            bird.dead = True
   
         pygame.display.update()
         window.frame.tick(window.FPS)
