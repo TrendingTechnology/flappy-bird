@@ -1,7 +1,9 @@
 # flappy-bird
 Just a copied of flappy bird game made by Thuongton999
 
-<img align="center" alt="Flappy Bird" width="640" height="480" src="assets/gameplay.gif">
+<div style="display: flex; justify-content: center; align-items: center; text-align: center">
+    <img alt="Flappy Bird" width="640" height="400" src="assets/gameplay.gif">
+</div>
 
 ## Installation and Usage
 
