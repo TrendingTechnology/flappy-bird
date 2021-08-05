@@ -40,7 +40,13 @@ gameDefaultSettings = {
     "COLUMN_IMAGE": pygame.image.load(resource_path("images/column.png")),
     "ICON": pygame.image.load(resource_path("images/favicon.ico")),
     "BACKGROUND": pygame.image.load(resource_path("images/background.png")),
-    "START_BUTTON": pygame.image.load(resource_path("images/start_button.png"))
+    "SCOREBOARD": pygame.image.load(resource_path("images/scoreboard.png")),
+    "START_BUTTON": pygame.image.load(resource_path("images/start_button.png")),
+    "BRONZE_MEDAL": pygame.image.load(resource_path("images/medal_bronze.png")),
+    "SILVER_MEDAL": pygame.image.load(resource_path("images/medal_silver.png")),
+    "GOLD_MEDAL": pygame.image.load(resource_path("images/medal_gold.png")),
+    "PlATINUM_MEDAL": pygame.image.load(resource_path("images/medal_platinum.png")),   
+    "MEDAL_HOVER": pygame.image.load(resource_path("images/medal_hover.png")) 
 }
 
 colors = {
@@ -48,7 +54,8 @@ colors = {
     "black": (0, 0, 0),
     "clotting": (82,58,74),
     "sun": (230, 193, 32),
-    "grey": (143, 143, 143)
+    "grey": (143, 143, 143),
+    "lemon_chiffon": (255, 250, 205),
 }
 
 def setKwargsToProps(props, kwargs):
@@ -117,15 +124,15 @@ class Bird:
             "bird_image": gameDefaultSettings["BIRD_IMAGE"],
             "default_speed": gameDefaultSettings["BIRD_SPEED"]
         }
-
-        setKwargsToProps(properties, kwargs)
         self.WIDTH = properties["width"]
         self.HEIGHT = properties["height"]
+        setKwargsToProps(properties, kwargs)
         self.positionX, self.positionY = properties["spawn_position"]
         self.defaultSpeed = properties["default_speed"]
         self.speed = properties["speed"]
-        self.birdImage = properties["bird_image"]
-        self.birdImage = pygame.transform.scale(self.birdImage, (self.WIDTH, self.HEIGHT))
+        self.birdImage = pygame.transform.scale(properties["bird_image"], (self.WIDTH, self.HEIGHT))
+        self.birdUpImage = pygame.transform.rotate(self.birdImage, 45)
+        self.birdDownImage = pygame.transform.rotate(self.birdImage, -45)
 
 class Column:
     def __init__(self, **kwargs):
@@ -211,32 +218,116 @@ class Score:
         scoredRendered = bordered(str(self.points), self.font, gfcolor=self.color, ocolor=self.borderColor)
         self.interface.interface.blit(scoredRendered, (self.interface.WIDTH // 2 - scoredRendered.get_width() // 2, 50))
 
-class Window:
+class ScoreBoard():
+    
     def __init__(self, **kwargs):
-        self.frame = pygame.time.Clock()
         properties = {
-            "width": gameDefaultSettings["WINDOW_WIDTH"],
-            "height": gameDefaultSettings["WINDOW_HEIGHT"],
-            "fps": gameDefaultSettings["FPS"],
-            "title": gameDefaultSettings["WINDOW_TITLE"],
-            "icon": gameDefaultSettings["ICON"],
-            "background": gameDefaultSettings["BACKGROUND"],
-            "speed": gameDefaultSettings["WINDOW_SPEED"]
+            "points": 0,
+            "position_x": 0,
+            "position_y": 0,
+            "width": 350,
+            "height": 175,
+            "interface": None,
+            "board_image": gameDefaultSettings["SCOREBOARD"],
+            "medal_hover": gameDefaultSettings["MEDAL_HOVER"],
+            "medal_size": 80,
+            "medals": {
+                "bronze": gameDefaultSettings["BRONZE_MEDAL"],
+                "silver": gameDefaultSettings["SILVER_MEDAL"],
+                "gold": gameDefaultSettings["GOLD_MEDAL"],
+                "platinum": gameDefaultSettings["PlATINUM_MEDAL"],
+                "hover": gameDefaultSettings["MEDAL_HOVER"]
+            }
         }
         setKwargsToProps(properties, kwargs)
+        self.marginLeft = 30
+        self.marginRight = 30
+        self.marginTop = 20
+        self.marginBottom = 20
+        self.points = properties["points"]
+        self.interface = properties["interface"]
         self.WIDTH = properties["width"]
         self.HEIGHT = properties["height"]
-        self.title = properties["title"]
-        self.FPS = properties["fps"]
-        self.icon = properties["icon"]
-        self.background = properties["background"]
-        self.speed = properties["speed"]
-
-        pygame.display.set_icon(self.icon)
-        pygame.display.set_caption(self.title)
-
-        self.interface = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
-        self.background = pygame.transform.scale(self.background, (self.WIDTH, self.HEIGHT))
+        self.positionX = properties["position_x"] if properties["position_x"] else self.interface.WIDTH//2-self.WIDTH//2
+        self.positionY = properties["position_y"] if properties["position_y"] else self.interface.HEIGHT//2-self.HEIGHT//2
+        self.medalSize = properties["medal_size"]
+        self.medalPositionX = self.positionX + self.marginLeft
+        self.medalPositionY = self.positionY + self.HEIGHT//2 - self.marginBottom
+        self.medalHoverSize = self.medalSize + 6
+        self.scoreBoardImage = pygame.transform.scale(properties["board_image"], (self.WIDTH, self.HEIGHT))
+        self.medals = {
+            "bronze": pygame.transform.scale(properties["medals"]["bronze"], (self.medalSize, self.medalSize)),
+            "silver": pygame.transform.scale(properties["medals"]["silver"], (self.medalSize, self.medalSize)),
+            "gold": pygame.transform.scale(properties["medals"]["gold"], (self.medalSize, self.medalSize)),
+            "platinum": pygame.transform.scale(properties["medals"]["platinum"], (self.medalSize, self.medalSize)),
+            "hover": pygame.transform.scale(properties["medals"]["hover"], (self.medalHoverSize, self.medalHoverSize))
+        }
+        self.medalReached = None
+    
+    def renderScoreBoard(self):
+        self.interface.interface.blit(self.scoreBoardImage, (self.positionX, self.positionY))
+        if self.points >= 5:
+            self.medalReached = self.medals["bronze"]
+            if self.points >= 10:
+                self.medalReached = self.medals["silver"]
+                if self.points >= 20:
+                    self.medalReached = self.medals["gold"]
+                    if self.points >= 40:
+                        self.medalReached = self.medals["platinum"]
+        medalTextRendered = bordered(
+            "MEDAL",
+            gameDefaultSettings["DEFAULT_TEXT"],
+            gfcolor=colors["clotting"],
+            ocolor=colors["lemon_chiffon"],
+            opx=3
+        )
+        self.interface.interface.blit(
+            medalTextRendered, 
+            (
+                self.positionX+self.marginLeft, 
+                self.positionY+self.marginTop
+            )
+        )
+        self.interface.interface.blit(self.medals["hover"], (self.medalPositionX, self.medalPositionY))
+        if self.medalReached:
+            self.interface.interface.blit(
+                self.medalReached, 
+                (
+                    self.medalPositionX+(self.medalHoverSize-self.medalSize)//2, 
+                    self.medalPositionY+(self.medalHoverSize-self.medalSize)//2
+                )
+            )
+        scoreTextRendered = bordered(
+            "SCORES",
+            gameDefaultSettings["DEFAULT_TEXT"],
+            gfcolor=colors["clotting"],
+            ocolor=colors["lemon_chiffon"],
+            opx=3
+        )
+        scoreTextRenderedWidth, scoreTextRenderedHeight = scoreTextRendered.get_size()
+        scorePointsRendered = bordered(
+            str(self.points),
+            gameDefaultSettings["DEFAULT_HEADER"],
+            gfcolor=colors["clotting"],
+            ocolor=colors["lemon_chiffon"],
+            opx=3
+        )
+        scorePointsRenderedWidth, scorePointsRenderedHeight = scorePointsRendered.get_size()        
+        
+        self.interface.interface.blit(
+            scoreTextRendered,
+            (
+                self.positionX+self.WIDTH-self.marginRight-scoreTextRenderedWidth,
+                self.positionY+self.marginTop
+            )
+        )
+        self.interface.interface.blit(
+            scorePointsRendered, 
+            (
+                self.positionX+self.WIDTH-self.marginRight-scoreTextRenderedWidth+(scoreTextRenderedWidth-scorePointsRenderedWidth)//2, 
+                self.positionY+self.marginTop+scoreTextRenderedHeight+(self.medalHoverSize-scorePointsRenderedHeight)//2
+            )
+        )
 
 class Button:
     def __init__(self, **kwargs):
@@ -260,6 +351,34 @@ class Button:
             )
         return False
 
+class Window:
+    def __init__(self, **kwargs):
+        self.frame = pygame.time.Clock()
+        properties = {
+            "width": gameDefaultSettings["WINDOW_WIDTH"],
+            "height": gameDefaultSettings["WINDOW_HEIGHT"],
+            "fps": gameDefaultSettings["FPS"],
+            "title": gameDefaultSettings["WINDOW_TITLE"],
+            "icon": gameDefaultSettings["ICON"],
+            "background": gameDefaultSettings["BACKGROUND"],
+            "speed": gameDefaultSettings["WINDOW_SPEED"]
+        }
+        setKwargsToProps(properties, kwargs)
+        self.WIDTH = properties["width"]
+        self.HEIGHT = properties["height"]
+        self.title = properties["title"]
+        self.FPS = properties["fps"]
+        self.icon = properties["icon"]
+        self.background = properties["background"]
+        self.backgroundPosX = 0
+        self.speed = properties["speed"]
+
+        pygame.display.set_icon(self.icon)
+        pygame.display.set_caption(self.title)
+
+        self.interface = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+        self.background = pygame.transform.scale(self.background, (self.WIDTH, self.HEIGHT))
+
 def birdCollision(bird, column):
     return (
         bird.positionX < column.positionX + column.WIDTH and 
@@ -274,8 +393,11 @@ environment = Environment()
 columns = Columns(interface=window)
 score = Score(interface=window)
 
+def gameQuit():
+    os.sys.exit("You dont want to play this game? Fvck you!")
+    pygame.quit()
+
 def gameStartScreen():
-    backgroundPos = 0
     startGame = False
     startButton = Button(
         position_x=window.WIDTH//2, 
@@ -285,13 +407,12 @@ def gameStartScreen():
     startButton.positionX -= startButton.WIDTH//2
     startButton.positionY -= startButton.HEIGHT//2
     while not startGame:
-        window.interface.blit(window.background, (backgroundPos, 0))
-        window.interface.blit(window.background, (backgroundPos+window.WIDTH, 0))
-        backgroundPos -= window.speed if backgroundPos + window.WIDTH > 0 else -window.WIDTH
+        window.interface.blit(window.background, (window.backgroundPosX, 0))
+        window.interface.blit(window.background, (window.backgroundPosX+window.WIDTH, 0))
+        window.backgroundPosX -= window.speed if window.backgroundPosX + window.WIDTH > 0 else -window.WIDTH
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                os.sys.exit("You dont want to play this game? Fvck you!")
-                pygame.quit()
+                gameQuit()
 
         marginTop = 20
         marginBottom = 10
@@ -330,21 +451,25 @@ def gameStartScreen():
             break
         pygame.display.update()
         window.frame.tick(window.FPS)
-    if startGame:
+    while startGame:
+        bird.__init__()
+        columns.__init__(interface=window)
+        score.__init__(interface=window)
+
         getReady()
         gamePlay()
+        startGame = gameOver()
+    return startGame
 
 def getReady():
-    backgroundPos = 0
     ready = False
     while not ready:
-        window.interface.blit(window.background, (backgroundPos, 0))
-        window.interface.blit(window.background, (backgroundPos+window.WIDTH, 0))
-        backgroundPos -= window.speed if backgroundPos + window.WIDTH > 0 else -window.WIDTH
+        window.interface.blit(window.background, (window.backgroundPosX, 0))
+        window.interface.blit(window.background, (window.backgroundPosX+window.WIDTH, 0))
+        window.backgroundPosX -= window.speed if window.backgroundPosX + window.WIDTH > 0 else -window.WIDTH
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                os.sys.exit("You dont want to play this game? Fvck you!")
-                pygame.quit()
+                gameQuit()
             elif event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN:
                 return
 
@@ -363,15 +488,14 @@ def getReady():
         window.frame.tick(window.FPS)
 
 def gamePlay():
-    backgroundPos = 0
     while not bird.dead:
-        window.interface.blit(window.background, (backgroundPos, 0))
-        window.interface.blit(window.background, (backgroundPos+window.WIDTH, 0))
-        backgroundPos -= window.speed if backgroundPos + window.WIDTH > 0 else -window.WIDTH
+        window.interface.blit(window.background, (window.backgroundPosX, 0))
+        window.interface.blit(window.background, (window.backgroundPosX+window.WIDTH, 0))
+        window.backgroundPosX -= window.speed if window.backgroundPosX + window.WIDTH > 0 else -window.WIDTH
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                bird.dead = True
+                gameQuit()
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                 bird.positionY -= bird.speed if bird.positionY >= 0 else 0
                 bird.speed = bird.defaultSpeed
@@ -383,7 +507,7 @@ def gamePlay():
             window.interface.blit(bottomColumn.columnImage, (bottomColumn.positionX, bottomColumn.positionY))
             if birdCollision(bird, topColumn) or birdCollision(bird, bottomColumn):
                 bird.dead = True
-                break 
+                break
         if columns.columns[0][0].positionX + columns.columns[0][0].WIDTH < bird.positionX and not columns.columns[0][2]:
             columns.columns[0][2] = True
             score.points += 1
@@ -403,6 +527,54 @@ def gamePlay():
         pygame.display.update()
         window.frame.tick(window.FPS)
 
+def gameOver():
+    scoreBoard = ScoreBoard(points=score.points, interface=window)
+    titleRendered = bordered(
+        "GAME OVER", 
+        gameDefaultSettings["DEFAULT_TITLE"], 
+        gfcolor=colors["white"], 
+        ocolor=colors["clotting"],
+        opx=5
+    )
+    notificationRendered = bordered(
+        "Press SPACE to play again or ESC to go back to Menu",
+        gameDefaultSettings["DEFAULT_TEXT"],
+        gfcolor=colors["lemon_chiffon"],
+        ocolor=colors["sun"],
+        opx=3
+    )
+    titleDropDownSpeed = 6
+    titlePositionX = window.WIDTH//2-titleRendered.get_width()//2
+    titlePositionY = -titleRendered.get_height()
+    marginBottom = 20
+    marginTop = 20
+    notificationPositionX = window.WIDTH//2-notificationRendered.get_width()//2
+    notificationPositionY = scoreBoard.positionY+scoreBoard.HEIGHT+marginTop
+    
+    playAgain = False
+    while not playAgain:
+        window.interface.blit(window.background, (window.backgroundPosX, 0))
+        window.interface.blit(window.background, (window.backgroundPosX+window.WIDTH, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                gameQuit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    return True
+                elif event.key == pygame.K_ESCAPE:
+                    return False
+
+        titlePositionY += titleDropDownSpeed if titlePositionY+titleRendered.get_height()+marginBottom < scoreBoard.positionY else 0
+        
+        window.interface.blit(notificationRendered, (notificationPositionX,notificationPositionY))
+        window.interface.blit(titleRendered, (titlePositionX, titlePositionY))
+        scoreBoard.renderScoreBoard()
+
+        pygame.display.update()
+        window.frame.tick(window.FPS)
+    return playAgain
+    
+
 if __name__ == "__main__":
     command = {
         "clearConsoleLog": {
@@ -414,9 +586,8 @@ if __name__ == "__main__":
     currentOS = platform.system()
     os.system(command["clearConsoleLog"][currentOS])
 
-    gameStartScreen()
-
-    pygame.quit()
-    os.sys.exit("Game Over: You are Dead")
+    home = True
+    while home:
+        gameStartScreen()
     
     
