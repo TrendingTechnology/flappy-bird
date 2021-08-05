@@ -11,7 +11,7 @@ git --version
 ```
 If it log something like `Python 3.x.x` and `git version x.x.x.<CurrentOS>.x`, now you can continue.
 Or else, you can go to [this page](https://www.python.org/downloads/) and download & install the Python version you want.
-And [here](https://git-scm.com/downloads) too.
+And download [Git here](https://git-scm.com/downloads) too.
 
 When everything is done, copy and paste this to your terminal
 ```
