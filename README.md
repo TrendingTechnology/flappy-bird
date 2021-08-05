@@ -11,6 +11,7 @@ pip install pygame
 cd ./src/
 python main.py
 ```
+You can only run `main.py` when you are on `src`
 ### Manual install
 > First-step: Download the .zip file
 > 
