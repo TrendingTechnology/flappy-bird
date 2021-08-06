@@ -5,7 +5,8 @@ block_cipher = None
 
 added_files = [
     ('src/images', 'images'),
-    ('src/font', 'font')
+    ('src/font', 'font'),
+    ('src/sounds', 'sounds')
 ]
 
 a = Analysis(['src\\main.py'],
