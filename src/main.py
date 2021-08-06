@@ -6,6 +6,7 @@ import sys
 import platform
 import random
 
+pygame.mixer.init()
 pygame.init()
 
 # this use for build .exe file
@@ -46,7 +47,9 @@ gameDefaultSettings = {
     "SILVER_MEDAL": pygame.image.load(resource_path("images/medal_silver.png")),
     "GOLD_MEDAL": pygame.image.load(resource_path("images/medal_gold.png")),
     "PlATINUM_MEDAL": pygame.image.load(resource_path("images/medal_platinum.png")),   
-    "MEDAL_HOVER": pygame.image.load(resource_path("images/medal_hover.png")) 
+    "MEDAL_HOVER": pygame.image.load(resource_path("images/medal_hover.png")),
+    "TAP_SOUND": pygame.mixer.Sound(resource_path("sounds/pop.wav")),
+    "GAME_OVER_SOUND": pygame.mixer.Sound(resource_path("sounds/game_over.wav")),
 }
 
 colors = {
@@ -108,10 +111,14 @@ def bordered(text, font, gfcolor=pygame.Color('dodgerblue'), ocolor=(255, 255, 2
 class Environment:
     def __init__(self, **kwargs):
         properties = {
-            "gravity": gameDefaultSettings["GRAVITY"]
+            "gravity": gameDefaultSettings["GRAVITY"],
+            "tap_sound": gameDefaultSettings["TAP_SOUND"],
+            "game_over_sound": gameDefaultSettings["GAME_OVER_SOUND"]
         }
         setKwargsToProps(properties, kwargs)
         self.gravity = properties["gravity"]
+        self.tapSound = properties["tap_sound"]
+        self.gameOverSound = properties["game_over_sound"]
 
 class Bird:
     def __init__(self, **kwargs):
@@ -130,9 +137,13 @@ class Bird:
         self.positionX, self.positionY = properties["spawn_position"]
         self.defaultSpeed = properties["default_speed"]
         self.speed = properties["speed"]
-        self.birdImage = pygame.transform.scale(properties["bird_image"], (self.WIDTH, self.HEIGHT))
-        self.birdUpImage = pygame.transform.rotate(self.birdImage, 45)
-        self.birdDownImage = pygame.transform.rotate(self.birdImage, -45)
+        self.birdDefaultImage = pygame.transform.scale(properties["bird_image"], (self.WIDTH, self.HEIGHT))
+        self.birdRotatedImage = self.birdDefaultImage
+
+    def updateBirdSize(self):
+        self.WIDTH = self.birdRotatedImage.get_width()
+        self.HEIGHT = self.birdRotatedImage.get_height()
+    
 
 class Column:
     def __init__(self, **kwargs):
@@ -216,10 +227,9 @@ class Score:
     
     def render(self):
         scoredRendered = bordered(str(self.points), self.font, gfcolor=self.color, ocolor=self.borderColor)
-        self.interface.interface.blit(scoredRendered, (self.interface.WIDTH // 2 - scoredRendered.get_width() // 2, 50))
+        self.interface.interface.blit(scoredRendered, (self.interface.WIDTH//2 - scoredRendered.get_width()//2, 50))
 
-class ScoreBoard():
-    
+class ScoreBoard():   
     def __init__(self, **kwargs):
         properties = {
             "points": 0,
@@ -481,7 +491,7 @@ def getReady():
             ocolor=colors["white"],
             opx=3
         )
-        window.interface.blit(bird.birdImage, (bird.positionX, bird.positionY))
+        window.interface.blit(bird.birdRotatedImage, (bird.positionX, bird.positionY))
         window.interface.blit(getReadyTextRendered, (bird.positionX+bird.WIDTH+marginLeft, bird.positionY))
 
         pygame.display.update()
@@ -497,6 +507,7 @@ def gamePlay():
             if event.type == pygame.QUIT:
                 gameQuit()
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                environment.tapSound.play()
                 bird.positionY -= bird.speed if bird.positionY >= 0 else 0
                 bird.speed = bird.defaultSpeed
                             
@@ -517,8 +528,11 @@ def gamePlay():
 
         bird.positionY += bird.speed + 0.5*environment.gravity
         bird.speed += environment.gravity
+        bird.birdRotatedImage = pygame.transform.rotate(bird.birdDefaultImage, -bird.speed*2)
+        
+        bird.updateBirdSize()
 
-        window.interface.blit(bird.birdImage, (bird.positionX, bird.positionY))
+        window.interface.blit(bird.birdRotatedImage, (bird.positionX, bird.positionY))
         score.render()
 
         if not (0 <= bird.positionY <= window.HEIGHT - bird.HEIGHT):
@@ -528,6 +542,7 @@ def gamePlay():
         window.frame.tick(window.FPS)
 
 def gameOver():
+    environment.gameOverSound.play()
     scoreBoard = ScoreBoard(points=score.points, interface=window)
     titleRendered = bordered(
         "GAME OVER", 
