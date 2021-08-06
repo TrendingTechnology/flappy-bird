@@ -26,7 +26,7 @@ python main.py
 ```
 
 ### Manual install
-> Download the .zip file
+> Download the `.zip` file
 > 
 > Extract it
 > 
